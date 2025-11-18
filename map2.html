@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Freely with No Boundaries · Map</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <meta name="description" content="My MAP:" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    #map {
+      height: 600px;
+      width: 100%;
+      border: 2px solid gray;
+      margin: 20px 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #cadecb;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"  style="width: 100px;">
+          <a class="navbar-brand" href="index.html">Home</a>
+          <style>
+            button {
+                background-color: #90E0EF;
+             }
+          </style>
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <button class="navbar-toggler" type="button" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"  style="width: 100px;">
+          <a class="navbar-brand" href="map2.html">Map</a>
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="container" style="justify-content: center; align-items: center; text-align: center;">
+    <section>
+      <h1 class="text-center">Live Freely With No Boundaries</h1>
+      <p>Zoom, click, explore any public / no permit required place. Open with a local server for best results.</p>
+      <div id="map"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Sydney's site for GEOG 464.</p>
+    </div>
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // Initialize the map
+    var map = L.map('map').setView([69.4267, -88.5938], 2.5);
+
+    // Base map tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Function to attach hover events
+    function attachEvents(feature, layer) {
+      let tooltipContent = '';
+      for (const key in feature.properties) {
+        tooltipContent += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+      } 
+      layer.bindTooltip(tooltipContent, { sticky: true });
+      layer.on({
+        mouseover: function(e) {
+            e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) e.target.bringToFront();
+            
+            infoDiv.innerHTML = "<h2>Feature Info</h2>";
+            for (const key in feature.properties) {
+                infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+            }
+        },
+        mouseout: function(e) {
+            e.target.setStyle({ color: layer.options.color, weight: 2, fillOpacity: 0.3 });
+            infoDiv.innerHTML = "<h2>Feature Info</h2>";
+        }
+      });
+    }
+
+    // List of GeoJSON files to load
+    var geojsonFiles = [
+        { name: "Ontario Wilderness Areas", url: "https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/wilderness_areas_final.geojson", color: "green" },
+        { name: "Manitoba Parks", url: "https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/Manitoba_Parks_Filtered_final.geojson", color: "purple" },
+        { name: "Saskatchewan Parks", url: "https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/Saskatchewan_Parks_Modified_renamed_final.geojson", color: "yellow"},
+
+    ];
+
+    // Object to hold overlay layers
+    var overlayLayers = {};
+
+    // Load all GeoJSON files
+    geojsonFiles.forEach(file => {
+        fetch(file.url)
+            .then(res => res.json())
+            .then(data => {
+                var layer = L.geoJSON(data, {
+                    style: { color: file.color, weight: 2, fillOpacity: 0.3 },
+                    onEachFeature: attachEvents
+                });
+                overlayLayers[file.name] = layer;
+
+                // Add first layer by default (optional)
+                if (Object.keys(overlayLayers).length === 1) {
+                    layer.addTo(map);
+                }
+
+                // Add or update layer control
+                if (!window.layerControl) {
+                    window.layerControl = L.control.layers({ "Street": street, "Topo": topo }, overlayLayers, { collapsed: false }).addTo(map);
+                } else {
+                    window.layerControl.addOverlay(layer, file.name);
+                }
+            })
+            .catch(err => console.error("Error loading GeoJSON:", file.url, err));
+    });
+    </script>
+
+    // ====== Load Local GeoJSON (Saskatchewan Parks) ======
+    let geojson; // Declare geojson globally so we can reset styles
+    fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/Saskatchewan_Parks_Modified_renamed_final.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/Manitoba_Parks_Filtered_final.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/pe_crown_land_fed_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/pe_crown_land_prov_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/wilderness_areas_final.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+
+    fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/pei_prov_parks_finaL.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/pe_nat_parks_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/pe_wildlife_mgmt_areas_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/bc_crown_land_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/QC_1real_final.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE/refs/heads/main/QC_2real_final.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/nb_wildlife_refuges_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/nb_prov_parks_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/nb_fed_parks_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/nb_crown_land_REPROJECTED.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464WEBSITE-/refs/heads/main/protected_areas_far_north_final.geojson')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+    fetch('https://raw.githubusercontent.com/sreymon/464website/refs/heads/main/')
+      .then(response => response.json())
+      .then(data => {
+        geojson = L.geoJSON(data, {
+          style: { color: 'green', weight: 2, fillOpacity: 0.3 },
+          onEachFeature: function (feature, layer) {
+            // Create tooltip
+            let info = '';
+            for (const key in feature.properties) {
+              info += `<strong>${key}</strong>: ${feature.properties[key]}<br>`;
+            }
+            layer.bindTooltip(info, {
+              className: 'my-labels',
+              sticky: true,
+              direction: 'top'
+            });
+
+            // Mouse events
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({ color: 'yellow', weight: 3, fillOpacity: 0.6 });
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                  e.target.bringToFront();
+                }
+                infoDiv.innerHTML = "<h2>Feature Info</h2>";
+                for (const key in feature.properties) {
+                  infoDiv.innerHTML += `<div class="property"><strong>${key}</strong>: ${feature.properties[key]}</div>`;
+                }
+              },
+              mouseout: function (e) {
+                geojson.resetStyle(e.target);
+                infoDiv.innerHTML = ""; // Optional: clear info panel
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(error => console.error('Local GeoJSON load error:', error));
+
+
+    // Click popup
+    map.on('click', function (e) {
+      L.popup()
+        .setLatLng(e.latlng)
+        .setContent('You clicked here! Coordinates: ' + e.latlng.lat.toFixed(4) + ', ' + e.latlng.lng.toFixed(4))
+        .openOn(map);
+    });
+  </script>
+
+</body>
+</html>
