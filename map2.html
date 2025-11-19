@@ -187,22 +187,25 @@ var OntarioFiles = [
   ];
 
   var OntarioLayer = L.layerGroup();
-
   OntarioFiles.forEach(url => {
     fetch(url)
       .then(res => res.json())
       .then(data => {
         var layer = L.geoJSON(data, {
-          style: { color: "green", weight: 2, fillOpacity: 0.3 },
+          style: function(feature) {
+            return {
+              color: "green",
+              weight: 2,
+              fillOpacity: 0.3
+            };
+          },
           onEachFeature: attachEvents
         });
         OntarioLayer.addLayer(layer);
       })
       .catch(err => console.error("Error loading Ontario GeoJSON:", url, err));
   });
-
   overlayLayers["Ontario"] = OntarioLayer;
-
   if (window.layerControl) {
     window.layerControl.addOverlay(OntarioLayer, "Ontario");
   }
