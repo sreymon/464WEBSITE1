@@ -247,7 +247,7 @@ var OntarioFiles = [
       .then(res => res.json())
       .then(data => {
         var layer = L.geoJSON(data, {
-          style: { color: "blue", weight: 2, fillOpacity: 0.3 },
+          style: { color: "yellow", weight: 2, fillOpacity: 0.3 },
           onEachFeature: attachEvents
         });
         NBLayer.addLayer(layer);
