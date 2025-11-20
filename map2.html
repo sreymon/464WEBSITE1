@@ -282,7 +282,7 @@ function attachEvents(feature, layer) {
     // ------------------------------------------------------------
     var natparksLayer = L.layerGroup();
 
-    fetch("https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/final_merged_gdf_with_comments.geojson")
+    fetch("https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/most_fed_park.geojson")
       .then(res => res.json())
       .then(data => {
         natparksLayer.addLayer(L.geoJSON(data, {
