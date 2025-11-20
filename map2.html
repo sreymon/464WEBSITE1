@@ -263,7 +263,7 @@
     // ------------------------------------------------------------
     var natparksLayer = L.layerGroup();
 
-    fetch("https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/final_merged_gdf.geojson")
+    fetch("https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/final_merged_gdf_with_comments.geojson")
       .then(res => res.json())
       .then(data => {
         natparksLayer.addLayer(L.geoJSON(data, {
