@@ -93,13 +93,14 @@ function attachEvents(feature, layer) {
   }
   layer.bindTooltip(tooltipContent, { sticky: true });
 
-  // Save original style (safe for all geometry types)
+  // Save original style
   const originalStyle = {
     color: layer.options.color || "#3388ff",
     weight: layer.options.weight || 2,
     fillOpacity: layer.options.fillOpacity || 0.3
   };
 
+  // Hover events
   layer.on({
     mouseover: function (e) {
       e.target.setStyle({
@@ -107,16 +108,18 @@ function attachEvents(feature, layer) {
         weight: 3,
         fillOpacity: 0.6
       });
-      // Bring to front for visual clarity
+
+      // Bring to front for clarity (optional)
       if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         e.target.bringToFront();
       }
     },
     mouseout: function (e) {
-      e.target.setStyle(originalStyle);
+      e.target.setStyle(originalStyle);  // restore original polygon style
     }
   });
 }
+
 
 
     // ------------------------------------------------------------
