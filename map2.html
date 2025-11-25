@@ -125,10 +125,16 @@ function attachEvents(feature, layer) {
     // BC
     // ------------------------------------------------------------
     var bcFiles = [
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/MAdministrativeBANFF_FeaturesToJSO.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeBANFF_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/mount_revelstoke_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/yoho_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/kootenay_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/gwaii_haanas_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/gulf_islands_national_park_reserve_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/glacier_national_park_of_canada.geojson"
     ];
     
-    var bcColors = ["green"];  
+    var bcColors = ["green", "green", "green", "green", "green", "green", "green"];  
     
     var bcLayer = L.layerGroup();
     
@@ -157,10 +163,13 @@ function attachEvents(feature, layer) {
     // Nunavut
     // ------------------------------------------------------------
     var nuFiles = [
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/MAdministrative8_FeaturesToJSO.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/MAdministrative8_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/sirmilik_natpark_nu.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/qausuittuq_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/ukkusiksalik_national_park_of_canada.geojson"
     ];
     
-    var nuColors = ["green"];  
+    var nuColors = ["green", "green", "green", "green"];  
     
     var nuLayer = L.layerGroup();
     
@@ -189,10 +198,12 @@ function attachEvents(feature, layer) {
     // NWT
     // ------------------------------------------------------------
     var nwtFiles = [
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative33_FeaturesToJSO.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative33_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/wood_buffalo_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/waterton_lakes_national_park_of_canada.geojson"
     ];
     
-    var nwtColors = ["green"];  
+    var nwtColors = ["green", "green", "green"];  
     
     var nwtLayer = L.layerGroup();
     
@@ -269,12 +280,11 @@ function attachEvents(feature, layer) {
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Threatened_or.geojson",
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/deliminated.geojson",
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Voluntarily_Conserved.geojson",
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeFORILLION_FeaturesToJSO.geojson",
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeMINGAN_FeaturesToJSO.geojson"
     ];
 
 // Assign a color for each file (in the same order)
-    var quebecColors = ["orange", "orange", "orange", "orange", "pink", "pink", "pink", "pink", "blue", "green", "red", "red", "red", "red", "red", "green", "green"];  
+    var quebecColors = ["orange", "orange", "orange", "orange", "pink", "pink", "pink", "pink", "blue", "green", "red", "red", "red", "red", "red", "green"];  
     
     var quebecLayer = L.layerGroup();
     
