@@ -152,7 +152,12 @@ function attachEvents(feature, layer) {
       });
   });
 
-  var overlayLayers[]
+  var overlayLayers = {};
+  var baseLayers = {
+    "Street": street
+  };
+  var layerControl = L.control.layers(baseLayers, overlayLayers).addTo(map);
+  window.layerControl = layerControl;
 
   overlayLayers["British Columbia"] = bcLayer;
   layerControl.addOverlay(bcLayer, "British Columbia");
