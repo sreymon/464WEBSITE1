@@ -121,15 +121,79 @@ function attachEvents(feature, layer) {
 }
 
 
+    // ------------------------------------------------------------
+    // Nunavut
+    // ------------------------------------------------------------
+    var nuFiles = [
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/MAdministrative8_FeaturesToJSO.geojson"
+    ];
+    
+    var nuColors = ["green"];  
+    
+    var nuLayer = L.layerGroup();
+    
+    nuFiles.forEach((url, index) => {
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          var layer = L.geoJSON(data, {
+            style: {
+              color: nuColors[index],   // <-- Different color per file
+              weight: 2,
+              fillOpacity: 0.3
+            },
+            onEachFeature: attachEvents
+          });
+    
+          nuLayer.addLayer(layer);
+        })
+        .catch(err => console.error("Error loading Nunavut GeoJSON:", url, err));
+    });
+    
+    overlayLayers["Nunavut"] = nuLayer;
+    if (window.layerControl) window.layerControl.addOverlay(nuLayer, "Nunavut");
 
+    // ------------------------------------------------------------
+    // NWT
+    // ------------------------------------------------------------
+    var nwtFiles = [
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative33_FeaturesToJSO.geojson"
+    ];
+    
+    var nwtColors = ["green"];  
+    
+    var nwtLayer = L.layerGroup();
+    
+    nwtFiles.forEach((url, index) => {
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          var layer = L.geoJSON(data, {
+            style: {
+              color: nwtColors[index],   // <-- Different color per file
+              weight: 2,
+              fillOpacity: 0.3
+            },
+            onEachFeature: attachEvents
+          });
+    
+          nwtLayer.addLayer(layer);
+        })
+        .catch(err => console.error("Error loading Northwest Territories GeoJSON:", url, err));
+    });
+    
+    overlayLayers["Northwest Territories"] = nwtLayer;
+    if (window.layerControl) window.layerControl.addOverlay(nwtLayer, "Morthwest Territories");
+    
     // ------------------------------------------------------------
     // Manitoba
     // ------------------------------------------------------------
     var mbFiles = [
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Manitoba_Parks_Filtered_final.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Manitoba_Parks_Filtered_final.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative14_FeaturesToJSO.geojson"
     ];
     
-    var mbColors = ["light green"];  
+    var mbColors = ["light green", "green"];  
     
     var mbLayer = L.layerGroup();
     
