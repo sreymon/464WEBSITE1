@@ -120,6 +120,41 @@ function attachEvents(feature, layer) {
   });
 }
 
+// ------------------------------------------------------------
+    // NL
+    // ------------------------------------------------------------
+  var nlFiles = [
+    
+  ];
+
+  var nlColors = [];
+
+  var nlLayer = L.layerGroup();
+  nlFiles.forEach((url, index) => {
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        nlLayer.addLayer(L.geoJSON(data, {
+          style: {
+            color: nlColors[index],
+            weight: 2,
+            fillOpacity: 0.3
+          },
+          onEachFeature: attachEvents
+        }));
+      });
+  });
+
+  var overlayLayers = {};
+  var baseLayers = {
+    "Street": street
+  };
+  var layerControl = L.control.layers(baseLayers, overlayLayers).addTo(map);
+  window.layerControl = layerControl;
+
+  overlayLayers["Newfoundland and Labrador"] = nlLayer;
+  layerControl.addOverlay(nlLayer, "Newfoundland and Labrador");
+    
 
     // ------------------------------------------------------------
     // BC
