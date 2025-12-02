@@ -125,13 +125,13 @@ function attachEvents(feature, layer) {
     // BC
     // ------------------------------------------------------------
   var bcFiles = [
-    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeBANFF_FeaturesToJSO.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/mount_revelstoke_national_park_of_canada.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/yoho_national_park_of_canada.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/kootenay_national_park_of_canada.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/gwaii_haanas_national_park_reserve_of_canada.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/gulf_islands_national_park_reserve_of_canada.geojson",
-    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/glacier_national_park_of_canada.geojson"
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/glacier_national_park_of_canada.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/pacific_rim_national_park_reserve_of_canada.geojson"
   ];
 
   var bcColors = ["green","green","green","green","orange","orange","green"];
@@ -202,7 +202,9 @@ function attachEvents(feature, layer) {
     // NL
     // ------------------------------------------------------------
   var nlFiles = [
-    
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/gros_morne_national_park_of_canada.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/terra_nova_national_park_of_canada.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/torngat_mountainss_national_park_of_canada.geojson"
   ];
 
   var nlColors = [];
@@ -232,8 +234,8 @@ function attachEvents(feature, layer) {
     // ------------------------------------------------------------
     var nwtFiles = [
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative33_FeaturesToJSO.geojson",
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/wood_buffalo_national_park_of_canada.geojson",
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/waterton_lakes_national_park_of_canada.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/NAATSIHJSONT_P_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/thaidene_nene_national_park_reserve_of_canada.geojson"
     ];
     
     var nwtColors = ["green", "green", "green"];  
@@ -266,10 +268,11 @@ function attachEvents(feature, layer) {
     // ------------------------------------------------------------
   var mbFiles = [
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Manitoba_Parks_Filtered_final.geojson",
-    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative14_FeaturesToJSO.geojson"
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Administrative14_FeaturesToJSO.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeWAPUSK_FeaturesToJSO.geojson"
   ];
 
-  var mbColors = ["lightgreen","green"];  // FIXED
+  var mbColors = ["lightgreen","green", "green"];  // FIXED
 
   var mbLayer = L.layerGroup();
   mbFiles.forEach((url, index) => {
@@ -309,11 +312,14 @@ function attachEvents(feature, layer) {
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Threatened_or.geojson",
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/deliminated.geojson",
       "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/Voluntarily_Conserved.geojson",
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeMINGAN_FeaturesToJSO.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeMINGAN_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeSAGUENAY_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeFORILLON_FeaturesToJSO.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/LAMUARICIE_FeaturesToJSON.geojson"
     ];
 
 // Assign a color for each file (in the same order)
-    var quebecColors = ["orange", "orange", "orange", "orange", "pink", "pink", "pink", "pink", "blue", "green", "red", "red", "red", "red", "red", "green"];  
+    var quebecColors = ["orange", "orange", "orange", "orange", "pink", "pink", "pink", "pink", "blue", "green", "red", "red", "red", "red", "red", "green", "green", "green", "green"];  
     
     var quebecLayer = L.layerGroup();
     
@@ -413,7 +419,10 @@ function attachEvents(feature, layer) {
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/PROV_PARK_REGULATED_final_last_last_part3.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/protected_areas_far_north_final.geojson",
     "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeF5_FeaturesToJSO.geojson",
-    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeROUGE_FeaturesToJSO.geojson"
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeROUGE_FeaturesToJSO.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/geogian_bay_islands_national_park_of_canada.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/point_pelee_national_park_of_canada.geojson",
+    "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/thousands_islands_national_park_of_canada.geojson"
   ];
 
   var ontarioColors = ["red","lightgreen","lightgreen","lightgreen","red","green","green"];  // FIXED
@@ -440,7 +449,9 @@ function attachEvents(feature, layer) {
     // Nova Scotia
     // ------------------------------------------------------------
     var nsFiles = [
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/ns_provincial_parks_final.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/ns_provincial_parks_final.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/kejimkujik_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/CAPEBRETON.geojson"
     ];
     
     var nsColors = ["lightgreen"];  
@@ -472,10 +483,12 @@ function attachEvents(feature, layer) {
     // New Brunswick
     // ------------------------------------------------------------
     var nbFiles = [
-      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/nb_prov_parks_final.geojson"
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/nb_prov_parks_final.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/fundy_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/kouchibouguac_national_park_of_canada.geojson"
     ];
     
-    var nbColors = ["lightgreen"];  
+    var nbColors = ["lightgreen", "green", "green"];  
     
     var nbLayer = L.layerGroup();
     
@@ -499,13 +512,51 @@ function attachEvents(feature, layer) {
     
     overlayLayers["New Brunswick"] = nbLayer;
     if (window.layerControl) window.layerControl.addOverlay(nbLayer, "New Brunswick");
+
+     // ------------------------------------------------------------
+   // Alberta
+  // ------------------------------------------------------------
+    var abFiles = [
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/wood_buffalo_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/waterton_lakes_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/jasper_national_park_of_canada.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/AdministrativeBANFF_FeaturesToJSON.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/elk_island_national_park_of_canada.geojson"
+    ];
+    
+    var abColors = ["lightgreen", "green", "green"];  
+    
+    var abLayer = L.layerGroup();
+    
+    abFiles.forEach((url, index) => {
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          var layer = L.geoJSON(data, {
+            style: {
+              color: abColors[index],   // <-- Different color per file
+              weight: 2,
+              fillOpacity: 0.3
+            },
+            onEachFeature: attachEvents
+          });
+    
+          abLayer.addLayer(layer);
+        })
+        .catch(err => console.error("Error loading Alberta GeoJSON:", url, err));
+    });
+    
+    overlayLayers["Alberta"] = abLayer;
+    if (window.layerControl) window.layerControl.addOverlay(abLayer, "Alberta");
+
     
     // ------------------------------------------------------------
     // National Parks
     // ------------------------------------------------------------
     // ------------------------------------------------------------
     var natparkFiles = [
-      "https://github.com/sreymon/464WEBSITE1/blob/main/FEDparksFINAL.geojson"
+      "https://github.com/sreymon/464WEBSITE1/blob/main/FEDparksFINAL.geojson",
+      "https://raw.githubusercontent.com/sreymon/464WEBSITE1/refs/heads/main/National_Park.geojson"
     ];
     
     var natparkColors = ["green"];  
